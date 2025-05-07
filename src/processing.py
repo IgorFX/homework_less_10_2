@@ -1,4 +1,4 @@
-def filter_by_state(data: list[dict], state: str = "EXECUTED") -> list:
+def filter_by_state(data: list[dict], state: str = "CANCELED") -> list:
     """Принимает на вход список словарей возвращает новый список
     словарей, содержащий только те словари, у которых ключ state
     соответствует указанному значению"""
@@ -8,15 +8,24 @@ def filter_by_state(data: list[dict], state: str = "EXECUTED") -> list:
     for operation in data:
         if operation.get("state", 0) == state:
             operations_state.append(operation)
-
+        else:
+            return 'Дата отсутствует'
     return operations_state
 
 
-def sort_by_date(data: list[dict], descending: bool = True) -> list:
+def sort_by_date(data: list[dict], descending: bool = True) -> list[dict]:
     """Функция принимает список словарей и необязательный параметр,
     задающий порядок сортировки (по умолчанию — убывание).
     возвращает новый список, отсортированный по дате"""
 
-    data.sort(key=lambda x: x["date"], reverse=descending)
+    new_transactions_list = []
 
-    return data
+    for item in data:
+        if item.get("date", 0):
+            new_transactions_list.append(item)
+        else:
+            return "Дата отсутствует"
+
+    new_transactions_list.sort(key=lambda x: x["date"], reverse=descending)
+
+    return new_transactions_list

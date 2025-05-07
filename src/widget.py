@@ -1,33 +1,41 @@
-from datetime import datetime as dt
-
 from src.masks import get_mask_account, get_mask_card_number
 
 
 def mask_account_card(card: str) -> str:
     """Возвращает название карты и маскиолваный номер карты(счета)"""
+    if len(card) != 0:
 
-    account_card = card.split()
+        account_card = card.split()
 
-    if account_card[0] == "Счет":
-        masked_account = get_mask_account(int(account_card[1]))
-        return f"{account_card[0]} {masked_account}"
-    else:
-        if len(account_card) > 2:
-            card_name = f"{account_card[0]} {account_card[1]}"
+        if account_card[0] == "Счет":
+            masked_account = get_mask_account(account_card[1])
+            return f"{account_card[0]} {masked_account}"
+        elif len(account_card) == 1 and account_card[-1].isdigit():
+            return "Отсутствует наименование карты(счета)"
+        elif card == "":
+            return "Не указан номер карты"
         else:
-            card_name = f"{account_card[0]}"
-        masked_card = get_mask_card_number(int(account_card[-1]))
+            if len(account_card) > 2:
+                card_name = f"{account_card[0]} {account_card[1]}"
+            else:
+                card_name = f"{account_card[0]}"
+            masked_card = get_mask_card_number(account_card[-1])
+    else:
+        return "Не указан номер карты"
 
     return f"{card_name} {masked_card}"
 
 
-def get_date(date: str) -> str:
-    """Принимает стоку с датой и временем, возвращает дату в формате ДД.ММ.ГГ"""
+def get_date(data: str) -> str:
+    """Принимает стоку с датой и временем, проверяет на присутствие
+    данных и их корректность, и возвращает дату в формате ДД.ММ.ГГ"""
 
-    check_date = dt.strptime(date, "%Y-%d-%mT%H:%M:%S.%f")
-    year = check_date.year
-    month = check_date.month
-    day = check_date.day
-    new_date = f"{day}.{month}.{year}"
+    if len(data) == 26 and 'T' in data:
+        year = data[:4]
+        month = data[5:7]
+        day = data[8:10]
 
-    return new_date
+    else:
+        return "Некорректный формат даты"
+
+    return f'{day}.{month}.{year}'
